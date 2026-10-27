@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f1e9">
+  <meta name="description" content="Explore open environmental radiation measurements from Safecast, a global citizen-science project.">
+  <title>Invisible Atlas — Explore the unseen</title>
+  <link rel="preconnect" href="https://api.safecast.org">
+  <link rel="preconnect" href="https://unpkg.com">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="wordmark" href="#" aria-label="Invisible Atlas home"><span class="mark">IA</span> INVISIBLE ATLAS</a>
+    <nav><a href="#about">About the data</a><a href="#api">The API</a><a href="https://safecast.org/data/" target="_blank" rel="noreferrer">Safecast ↗</a></nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="eyebrow"><span class="pulse"></span> OPEN DATA FIELD NOTE 001</div>
+      <h1>See what<br><em>can't be seen.</em></h1>
+      <div class="hero-bottom">
+        <p class="lede">A field guide to environmental radiation measurements collected by a global network of citizen scientists.</p>
+        <div class="hero-stat"><strong>CC0</strong><span>PUBLIC-DOMAIN DATA</span></div>
+      </div>
+      <div class="hero-rule"><span>01 / EXPLORE</span><span>LIVE QUERY · NO API KEY</span></div>
+    </section>
+
+    <section class="explorer" id="explore">
+      <div class="section-head">
+        <div><div class="eyebrow">THE MEASUREMENT FIELD</div><h2>Look closer.</h2></div>
+        <p>Choose a location, request nearby observations, and inspect the underlying records.</p>
+      </div>
+      <div class="controls">
+        <label>LATITUDE<input id="lat" type="number" step="any" value="35.68" min="-90" max="90"></label>
+        <label>LONGITUDE<input id="lon" type="number" step="any" value="139.76" min="-180" max="180"></label>
+        <label>RADIUS <span class="unit">(METERS)</span><select id="distance"><option value="100">100 m</option><option value="500" selected>500 m</option><option value="1000">1 km</option><option value="5000">5 km</option><option value="10000">10 km</option></select></label>
+        <button id="searchBtn" class="primary">Find measurements <span>↗</span></button>
+      </div>
+      <div class="quick-locations" aria-label="Example locations">
+        <span>TRY A LOCATION</span><button data-lat="35.68" data-lon="139.76">Tokyo</button><button data-lat="37.42" data-lon="141.03">Fukushima area</button><button data-lat="51.5072" data-lon="-0.1276">London</button><button data-lat="40.7128" data-lon="-74.0060">New York</button>
+      </div>
+
+      <div class="map-layout">
+        <div id="map" aria-label="Map of Safecast measurements"></div>
+        <aside class="result-panel">
+          <div class="panel-top"><span class="eyebrow">QUERY RESULTS</span><span id="status" class="status">READY</span></div>
+          <div class="result-number"><strong id="count">—</strong><span>RECORDS RETURNED</span></div>
+          <p id="message" class="message">Run a query to explore observations around a location.</p>
+          <div class="mini-rule"></div>
+          <div class="legend"><span class="legend-dot"></span><span>Reported measurement</span></div>
+          <a id="rawLink" class="raw-link" href="https://api.safecast.org/measurements.json?latitude=35.68&longitude=139.76&distance=500" target="_blank" rel="noreferrer">Open raw JSON ↗</a>
+        </aside>
+      </div>
+      <div class="table-head"><div><div class="eyebrow">RAW OBSERVATIONS</div><h3>What was recorded</h3></div><button id="downloadBtn" class="secondary" disabled>Download CSV ↓</button></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>VALUE</th><th>UNIT</th><th>CAPTURED AT</th><th>LATITUDE</th><th>LONGITUDE</th></tr></thead>
+          <tbody id="records"><tr><td colspan="5" class="empty">No records loaded yet. Run a location query above.</td></tr></tbody>
+        </table>
+      </div>
+      <p class="small-note">This explorer displays records returned by the public API. It does not diagnose health risk or certify that an area is safe or unsafe. Values may vary by device, calibration, sampling conditions, and date.</p>
+    </section>
+
+    <section class="story-grid" id="about">
+      <div class="story-title"><div class="eyebrow">WHY THIS DATA MATTERS</div><h2>The invisible<br>becomes inspectable.</h2></div>
+      <div class="story-copy">
+        <p class="big-copy">Safecast is a volunteer-driven nonprofit that has collected and openly published environmental measurements since 2011.</p>
+        <p>Its dataset is unusual because it combines geographic coordinates, timestamps, units, and observations from a distributed citizen-science effort. That makes it possible to build independent maps and research tools from the source records rather than relying only on a pre-rendered visualization.</p>
+        <div class="fact-row"><div><strong>01</strong><span>PUBLIC DATA</span></div><p>Safecast says its measurement data is released under CC0, so it can be reused broadly.</p></div>
+        <div class="fact-row"><div><strong>02</strong><span>NO KEY</span></div><p>Anonymous querying and downloading are documented by Safecast.</p></div>
+        <div class="fact-row"><div><strong>03</strong><span>REPRODUCIBLE</span></div><p>Each query can be opened as a URL or repeated from a terminal with curl.</p></div>
+      </div>
+    </section>
+
+    <section class="api-section" id="api">
+      <div class="eyebrow">THE DISCOVERY</div>
+      <h2>A public API hiding<br>in plain sight.</h2>
+      <div class="api-card">
+        <div class="api-card-head"><span>SAFecast · Measurements endpoint</span><span class="method">GET</span></div>
+        <code id="curlCode">curl -L "https://api.safecast.org/measurements.json?latitude=35.68&amp;longitude=139.76&amp;distance=500"</code>
+        <button id="copyCurl" class="secondary">Copy request ⧉</button>
+      </div>
+      <div class="api-columns">
+        <div><span class="eyebrow">WHY IT'S SPECIAL</span><p>Many public APIs focus on popular commercial categories. Safecast exposes a substantial, open environmental dataset collected outside a single centralized sensor network.</p></div>
+        <div><span class="eyebrow">WHAT TO BUILD</span><p>Build a time-aware measurement atlas, compare data coverage across regions, or combine the observations with other open datasets for environmental research.</p></div>
+        <div><span class="eyebrow">SOURCE & LICENSE</span><p><a href="https://safecast.org/frequently-asked-questions/openness-and-data-access/" target="_blank" rel="noreferrer">Access policy ↗</a><br><a href="https://safecast.org/data/" target="_blank" rel="noreferrer">Data & CC0 ↗</a><br><a href="https://api.safecast.org/" target="_blank" rel="noreferrer">API home ↗</a></p></div>
+      </div>
+    </section>
+  </main>
+  <footer><span>INVISIBLE ATLAS · AN OPEN-DATA FIELD NOTE</span><span>Independent demo · Not affiliated with Safecast</span></footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="./app.js"></script>
+</body>
+</html>
